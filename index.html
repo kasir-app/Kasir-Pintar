@@ -64,7 +64,7 @@
             display: none !important;
         }
 
-        /* Tata Letak Utama 260px */
+        /* Tata Letak Sidebar 260px & Konten Responsif */
         .app-shell {
             display: flex;
             min-height: 100vh;
@@ -339,7 +339,38 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 260px;
+            max-width: 280px;
+        }
+
+        .sync-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            background: var(--bg-subtle);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .sync-status-pill.connecting {
+            background: var(--amber-soft);
+            color: var(--amber);
+            border-color: rgba(217, 119, 6, 0.35);
+        }
+
+        .sync-status-pill.connected {
+            background: var(--emerald-soft);
+            color: var(--emerald);
+            border-color: rgba(5, 150, 105, 0.35);
+        }
+
+        .sync-status-pill.offline {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--primary);
+            border-color: rgba(220, 38, 38, 0.25);
         }
 
         .header-actions {
@@ -471,6 +502,55 @@
             font-size: 13px;
             color: var(--text-muted);
             margin-bottom: 16px;
+        }
+
+        /* Kartu Banner Call Center Pusat (Admin Cabang & Pengaturan) */
+        .call-center-banner {
+            width: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);
+            color: #ffffff;
+            border: 1px solid rgba(52, 211, 153, 0.38);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .call-center-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(52, 211, 153, 0.2);
+            color: #6ee7b7;
+        }
+
+        .call-center-number-text {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #34d399;
+            margin-top: 4px;
+        }
+
+        .call-center-meta {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-top: 4px;
+            line-height: 1.45;
+        }
+
+        .call-center-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         /* Standee QRIS */
@@ -946,7 +1026,7 @@
             margin-top: 8px;
         }
 
-        /* Riwayat Transaksi */
+        /* Statistik & Riwayat Transaksi */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -963,6 +1043,19 @@
         @media (min-width: 900px) {
             .stats-grid {
                 grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .kpi-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .kpi-grid-3 {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
@@ -1100,7 +1193,7 @@
             font-size: 13px;
         }
 
-        /* Pengaturan & Cabang & PIN */
+        /* Pengaturan, Cabang & PIN */
         .settings-divider {
             margin: 18px 0;
             border: none;
@@ -1187,16 +1280,6 @@
             color: var(--emerald);
         }
 
-        .inline-edit-box {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed var(--border-color);
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px;
-        }
-
         /* Modal & Notifikasi */
         .modal-overlay {
             position: fixed;
@@ -1250,7 +1333,7 @@
 
         .confirm-modal-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 430px;
             background: var(--bg-surface);
             color: var(--text-main);
             border: 1px solid var(--border-color);
@@ -1678,6 +1761,7 @@
                     </div>
                 </div>
                 <div class="header-actions">
+                    <span id="firebaseSyncBadge" class="sync-status-pill">Sinkron Lokal</span>
                     <button id="btnHeaderVoiceToggle" type="button" class="btn btn-soft-emerald">
                         <span>&#128266;</span>
                         <span id="headerVoiceText">Suara: Aktif</span>
@@ -1694,6 +1778,32 @@
             </header>
 
             <main class="content-area">
+                <!-- Banner Call Center Pusat (Otomatis Tampil untuk Admin Cabang di Layar Utama) -->
+                <div id="branchCallCenterWorkspaceCard" class="call-center-banner hidden" aria-label="Informasi Call Center Pusat">
+                    <span class="call-center-pill">&#9742; Call Center &amp; Koordinasi Pusat</span>
+                    <div id="ccBannerPicTitle" style="font-size:16px;font-weight:800;margin-top:6px;">
+                        Helpdesk Pusat Warung Pintar
+                    </div>
+                    <div id="ccBannerPhoneDisplay" class="call-center-number-text">
+                        Belum diatur oleh Master Admin
+                    </div>
+                    <div id="ccBannerHoursText" class="call-center-meta">
+                        Jam Operasional: Senin - Minggu, 08:00 - 21:00 WIB
+                    </div>
+                    <div id="ccBannerNoteText" class="call-center-meta" style="color:#a7f3d0;"></div>
+                    <div id="ccBannerActionsRow" class="call-center-actions hidden">
+                        <a id="btnCcBannerWa" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-emerald">
+                            &#128172; Chat WhatsApp
+                        </a>
+                        <a id="btnCcBannerTel" href="#" class="btn btn-blue">
+                            &#128222; Telepon Langsung
+                        </a>
+                        <button id="btnCcBannerCopy" type="button" class="btn btn-outline" style="background:rgba(255,255,255,0.12);color:#ffffff;border-color:rgba(255,255,255,0.24);">
+                            &#128203; Salin Nomor
+                        </button>
+                    </div>
+                </div>
+
                 <!-- 1. LAYAR QRIS -->
                 <section id="page-qris" class="page-section qris-wrapper">
                     <div class="qris-top-bar">
@@ -1802,7 +1912,7 @@
 
                         <div class="form-group">
                             <label for="kasirPayerNoteInput" class="form-label">Nama Pembeli / Catatan (Opsional)</label>
-                            <input id="kasirPayerNoteInput" type="text" class="text-input" placeholder="Contoh: Ibu Sari - Beras 5kg & Telur">
+                            <input id="kasirPayerNoteInput" type="text" class="text-input" placeholder="Contoh: Ibu Sari - Beras 5kg &amp; Telur">
                         </div>
 
                         <div class="quick-label">Nominal Cepat:</div>
@@ -1984,7 +2094,7 @@
                 <section id="page-pengaturan" class="page-section hidden narrow-container">
                     <div class="card">
                         <h2 class="section-heading">Pengaturan Warung &amp; Soundbox</h2>
-                        <p class="section-desc">Atur identitas merchant, pemilik rekening, NMID, gambar QRIS, suara Soundbox, serta cadangan JSON.</p>
+                        <p class="section-desc">Atur identitas merchant, pemilik rekening, NMID, gambar QRIS, suara Soundbox, serta kontak Call Center pusat.</p>
 
                         <div class="form-group">
                             <label for="settingWarungName" class="form-label">Nama Warung / Merchant</label>
@@ -2042,6 +2152,72 @@
                             Simpan Pengaturan
                         </button>
 
+                        <hr class="settings-divider">
+
+                        <!-- Input Manual Call Center Pusat (Khusus Master Admin -> Otomatis Tampil di Admin Cabang) -->
+                        <div id="callCenterMasterFormSection" class="hidden">
+                            <h3 class="section-heading" style="font-size:16px;">Pengaturan Call Center &amp; Koordinasi Pusat</h3>
+                            <p class="section-desc" style="margin-bottom:12px;">
+                                Nomor dan info Call Center yang Anda input manual di sini akan langsung tersinkronisasi dan terlihat di halaman <strong>Admin Cabang</strong>.
+                            </p>
+
+                            <div class="form-group">
+                                <label for="settingCcName" class="form-label">Nama Layanan / PIC Call Center</label>
+                                <input id="settingCcName" type="text" class="text-input" placeholder="Contoh: Helpdesk Pusat Warung Pintar (Bpk. Andi)">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="settingCcPhone" class="form-label">Nomor Telepon / WhatsApp Call Center *</label>
+                                <input id="settingCcPhone" type="tel" class="text-input" placeholder="Contoh: 081234567890 atau 6281234567890">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="settingCcHours" class="form-label">Jam Operasional</label>
+                                <input id="settingCcHours" type="text" class="text-input" placeholder="Contoh: Senin - Minggu, 08:00 - 21:00 WIB">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="settingCcNotes" class="form-label">Catatan Koordinasi untuk Admin Cabang</label>
+                                <input id="settingCcNotes" type="text" class="text-input" placeholder="Contoh: Hubungi nomor ini jika kendala QRIS atau pembaruan data cabang.">
+                            </div>
+
+                            <button id="btnSaveCallCenter" type="button" class="btn btn-emerald btn-lg" style="width:100%;">
+                                Simpan &amp; Tayangkan ke Admin Cabang
+                            </button>
+                        </div>
+
+                        <!-- Kartu Informasi Call Center Read-Only untuk Admin Cabang -->
+                        <div id="callCenterBranchReadonlySection" class="hidden">
+                            <h3 class="section-heading" style="font-size:16px;">Kontak Call Center Pusat</h3>
+                            <p class="section-desc" style="margin-bottom:12px;">
+                                Informasi resmi dari Master Admin untuk bantuan operasional dan koordinasi cabang.
+                            </p>
+                            <div class="call-center-banner" style="margin-bottom:0;">
+                                <span class="call-center-pill">&#9742; Call Center Resmi Pusat</span>
+                                <div id="ccSettingPicTitle" style="font-size:16px;font-weight:800;margin-top:6px;">
+                                    Helpdesk Pusat Warung Pintar
+                                </div>
+                                <div id="ccSettingPhoneDisplay" class="call-center-number-text">
+                                    Belum diatur oleh Master Admin
+                                </div>
+                                <div id="ccSettingHoursText" class="call-center-meta">
+                                    Jam Operasional: -
+                                </div>
+                                <div id="ccSettingNoteText" class="call-center-meta" style="color:#a7f3d0;"></div>
+                                <div id="ccSettingActionsRow" class="call-center-actions hidden">
+                                    <a id="btnCcSettingWa" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-emerald">
+                                        &#128172; Chat WhatsApp
+                                    </a>
+                                    <a id="btnCcSettingTel" href="#" class="btn btn-blue">
+                                        &#128222; Telepon Langsung
+                                    </a>
+                                    <button id="btnCcSettingCopy" type="button" class="btn btn-outline" style="background:rgba(255,255,255,0.12);color:#ffffff;border-color:rgba(255,255,255,0.24);">
+                                        &#128203; Salin Nomor
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="masterAdminPinChangeSection" class="hidden">
                             <hr class="settings-divider">
                             <h3 class="section-heading" style="font-size:15px;">Ganti PIN Master Admin</h3>
@@ -2092,7 +2268,7 @@
                             <div>
                                 <h2 class="section-heading">Kelola Cabang</h2>
                                 <p class="section-desc" style="margin-bottom:0;">
-                                    Lihat cabang terdaftar, alihkan tampilan cabang aktif, aktifkan/nonaktifkan cabang, atau daftarkan cabang baru.
+                                    Lihat cabang terdaftar, alihkan tampilan cabang aktif, atur nomor Call Center untuk cabang, atau tambah cabang baru.
                                 </p>
                             </div>
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -2105,11 +2281,14 @@
                                     <option value="50">50 / hal</option>
                                     <option value="100">100 / hal</option>
                                 </select>
+                                <button id="btnShortcutSetCallCenter" type="button" class="btn btn-soft-emerald">
+                                    &#9742; Atur Call Center
+                                </button>
                                 <button id="btnMasterBackToMainMerchant" type="button" class="btn btn-outline">
                                     Merchant Pusat
                                 </button>
                                 <button id="btnCabangGoRegister" type="button" class="btn btn-primary">
-                                    + Daftar Cabang Baru
+                                    + Tambah Cabang
                                 </button>
                             </div>
                         </div>
@@ -2133,12 +2312,27 @@
 
                 <!-- 7. PENGELOLA PIN (KHUSUS MASTER ADMIN) -->
                 <section id="page-pin" class="page-section hidden">
+                    <div class="kpi-grid-3">
+                        <div class="stat-card dark-stat">
+                            <div class="stat-label">Total Cabang Terdaftar</div>
+                            <div id="pinKpiTotalBranches" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label" style="color:var(--emerald);">PIN Cabang Aktif</div>
+                            <div id="pinKpiActivePins" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label" style="color:var(--amber);">PIN Cabang Nonaktif</div>
+                            <div id="pinKpiDisabledPins" class="stat-value">0</div>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
                             <div>
                                 <h2 class="section-heading">Pengelola PIN Cabang</h2>
                                 <p class="section-desc" style="margin-bottom:0;">
-                                    Tampilkan/sembunyikan PIN, aktifkan/nonaktifkan PIN per cabang, edit/acak PIN 6 digit, dan hapus cabang.
+                                    Lihat/sembunyikan PIN, salin PIN, aktifkan/nonaktifkan PIN per cabang, edit/acak PIN 6 digit, dan hapus cabang.
                                 </p>
                             </div>
                             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -2155,7 +2349,7 @@
                                     Tampilkan Semua PIN
                                 </button>
                                 <button id="btnPinGoRegister" type="button" class="btn btn-primary">
-                                    + Registrasi Cabang
+                                    + Tambah Cabang
                                 </button>
                             </div>
                         </div>
@@ -2177,6 +2371,64 @@
                     </div>
                 </section>
             </main>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Cabang Baru (Master Admin) -->
+    <div id="addBranchModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="addBranchModalTitle">
+        <div class="confirm-modal-card">
+            <h3 id="addBranchModalTitle" style="font-size:17px;font-weight:800;">Tambah Cabang Baru</h3>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;margin-bottom:14px;">
+                Daftarkan admin cabang baru beserta PIN 6 digit unik.
+            </p>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="modalAddFullName" class="form-label">Nama Lengkap Admin Cabang *</label>
+                <input id="modalAddFullName" type="text" class="text-input" placeholder="Contoh: Rina Marlina">
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="modalAddMerchantName" class="form-label">Nama Merchant / Cabang *</label>
+                <input id="modalAddMerchantName" type="text" class="text-input" placeholder="Contoh: Warung Berkah Cabang Barat">
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="modalAddAddress" class="form-label">Alamat Merchant *</label>
+                <input id="modalAddAddress" type="text" class="text-input" placeholder="Contoh: Jl. Diponegoro No. 12, Bekasi">
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="modalAddPhone" class="form-label">Nomor Telepon / WhatsApp *</label>
+                <input id="modalAddPhone" type="tel" class="text-input" placeholder="Contoh: 081298765432">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="modalAddPinInput" class="form-label">PIN 6 Digit Cabang *</label>
+                <div class="input-row">
+                    <input id="modalAddPinInput" type="text" inputmode="numeric" maxlength="6" class="text-input" style="letter-spacing:3px;text-align:center;" placeholder="6 digit PIN">
+                    <button id="btnModalAddRandomPin" type="button" class="btn btn-outline">Acak PIN</button>
+                </div>
+            </div>
+            <div class="confirm-actions">
+                <button id="btnCloseAddBranchModal" type="button" class="btn btn-outline">Batal</button>
+                <button id="btnSaveAddBranchModal" type="button" class="btn btn-emerald">Simpan Cabang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit / Acak PIN 6 Digit Cabang -->
+    <div id="editPinModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="editPinModalTitle">
+        <div class="confirm-modal-card">
+            <h3 id="editPinModalTitle" style="font-size:17px;font-weight:800;">Ubah PIN 6 Digit Cabang</h3>
+            <p id="editPinModalSubtitle" style="font-size:12px;color:var(--text-muted);margin-top:4px;margin-bottom:14px;">
+                Atur ulang kode PIN 6 digit untuk login admin cabang ini.
+            </p>
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="modalEditPinInput" class="form-label">PIN 6 Digit Baru *</label>
+                <div class="input-row">
+                    <input id="modalEditPinInput" type="text" inputmode="numeric" maxlength="6" class="text-input" style="letter-spacing:4px;text-align:center;font-size:16px;" placeholder="000000">
+                    <button id="btnModalEditRandomPin" type="button" class="btn btn-outline">Acak PIN</button>
+                </div>
+            </div>
+            <div class="confirm-actions">
+                <button id="btnCloseEditPinModal" type="button" class="btn btn-outline">Batal</button>
+                <button id="btnSaveEditPinModal" type="button" class="btn btn-emerald">Simpan PIN Baru</button>
+            </div>
         </div>
     </div>
 
@@ -2269,7 +2521,7 @@
         (function () {
             "use strict";
 
-            // Penyimpanan aman dengan fallback memori internal jika localStorage diblokir atau melempar error
+            // Penyimpanan aman dengan cadangan memori internal jika localStorage diblokir
             var memoryStore = Object.create(null);
 
             function safeGet(key, fallback) {
@@ -2278,9 +2530,7 @@
                         var val = window.localStorage.getItem(key);
                         if (val !== null) return val;
                     }
-                } catch (err) {
-                    // Gunakan fallback memori
-                }
+                } catch (err) {}
                 if (Object.prototype.hasOwnProperty.call(memoryStore, key)) {
                     return memoryStore[key];
                 }
@@ -2294,10 +2544,8 @@
                     if (window.localStorage) {
                         window.localStorage.setItem(key, strVal);
                     }
-                    return true;
-                } catch (err) {
-                    return true;
-                }
+                } catch (err) {}
+                return true;
             }
 
             function safeRemove(key) {
@@ -2306,11 +2554,10 @@
                     if (window.localStorage) {
                         window.localStorage.removeItem(key);
                     }
-                    return true;
-                } catch (err) {
-                    return true;
-                }
+                } catch (err) {}
+                return true;
             }
+
             var DEFAULT_MASTER_PIN = "882026";
             var MASTER_PIN_CHANGE_GATE_CODE = "769108";
             var ROLE_MASTER = "master_admin";
@@ -2332,7 +2579,9 @@
                     phone: "081122334455",
                     pin: "102030",
                     status: "active",
+                    active: true,
                     pinEnabled: true,
+                    pinDisabled: false,
                     createdAt: "2026-11-18T08:00:00.000Z"
                 },
                 {
@@ -2343,7 +2592,9 @@
                     phone: "081234567890",
                     pin: "419205",
                     status: "active",
+                    active: true,
                     pinEnabled: true,
+                    pinDisabled: false,
                     createdAt: "2026-11-20T08:00:00.000Z"
                 },
                 {
@@ -2354,7 +2605,9 @@
                     phone: "085678901234",
                     pin: "738412",
                     status: "active",
+                    active: true,
                     pinEnabled: true,
+                    pinDisabled: false,
                     createdAt: "2026-11-21T09:30:00.000Z"
                 }
             ];
@@ -2451,6 +2704,10 @@
                 ownerName: DEFAULT_MERCHANT.ownerName,
                 nmid: DEFAULT_MERCHANT.nmid,
                 masterPin: DEFAULT_MASTER_PIN,
+                callCenterName: "Helpdesk Pusat Warung Pintar",
+                callCenterPhone: "",
+                callCenterHours: "Senin - Minggu, 08:00 - 21:00 WIB",
+                callCenterNotes: "Hubungi pusat jika terjadi kendala transaksi QRIS atau pembaruan data cabang.",
                 voiceEnabled: true,
                 speechRate: 0.95,
                 speechFormat: "lengkap",
@@ -2470,7 +2727,7 @@
                 pinInput: "",
                 draftBranchPin: "000000",
                 lastCreatedPin: "",
-                sessionRole: null, // null | "master_admin" | "branch_admin"
+                sessionRole: null,
                 activeBranchId: null,
                 selectedTrxBranchFilter: "ALL",
                 branchSearchQuery: "",
@@ -2487,6 +2744,33 @@
 
             var audioCtx = null;
             var modalTimer = null;
+
+            var cloudState = {
+                statusLabel: "Sinkron Lokal",
+                mode: "local",
+                db: null,
+                auth: null,
+                fns: null,
+                suppressRemoteEcho: false
+            };
+
+            function setCloudSyncBadge(label, mode) {
+                cloudState.statusLabel = String(label || "Sinkron Lokal");
+                cloudState.mode = mode || "local";
+                try {
+                    var badge = document.getElementById("firebaseSyncBadge");
+                    if (!badge) return;
+                    badge.textContent = cloudState.statusLabel;
+                    badge.className = "sync-status-pill";
+                    if (cloudState.mode === "connecting") {
+                        badge.classList.add("connecting");
+                    } else if (cloudState.mode === "connected") {
+                        badge.classList.add("connected");
+                    } else if (cloudState.mode === "offline") {
+                        badge.classList.add("offline");
+                    }
+                } catch (err) {}
+            }
 
             function normalizePin(raw) {
                 return String(raw || "").trim().replace(/\D/g, "").slice(0, 6);
@@ -2527,13 +2811,6 @@
                 return true;
             }
 
-            function setBranchPinEnabled(branch, enabled) {
-                if (!branch) return;
-                var flag = Boolean(enabled);
-                branch.pinEnabled = flag;
-                branch.pinDisabled = !flag;
-            }
-
             function formatRupiah(num) {
                 var n = Number.isFinite(Number(num)) ? Math.round(Number(num)) : 0;
                 return "Rp " + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -2562,9 +2839,7 @@
                             el.parentNode.removeChild(el);
                         }
                     }, 3400);
-                } catch (err) {
-                    // Cegah error berantai pada toast
-                }
+                } catch (err) {}
             }
 
             function copyToClipboardSafe(text, successMsg) {
@@ -2582,11 +2857,11 @@
                     document.body.removeChild(area);
                     showToast(successMsg || "Tersalin ke papan klip.", "success");
                 } catch (err) {
-                    showToast("Kode PIN: " + value, "info");
+                    showToast("Teks: " + value, "info");
                 }
             }
 
-            // Generator Matriks QR Deterministik Berbasis Canvas (Tanpa Library Eksternal)
+            // Generator Matriks QR Deterministik Berbasis HTML5 Canvas
             function buildDeterministicQrMatrix(payloadText, size) {
                 var n = Math.max(21, size || 29);
                 var grid = [];
@@ -2621,7 +2896,6 @@
                 placeFinder(0, n - 7);
                 placeFinder(n - 7, 0);
 
-                // Pola pewaktuan (timing patterns) pada baris & kolom ke-6
                 for (i = 8; i < n - 8; i++) {
                     if (!reserved[6][i]) {
                         grid[6][i] = (i % 2 === 0) ? 1 : 0;
@@ -2633,7 +2907,6 @@
                     }
                 }
 
-                // Pola perataan (alignment pattern)
                 var alignCenter = n - 9;
                 if (alignCenter > 8) {
                     for (var ar = -2; ar <= 2; ar++) {
@@ -2881,9 +3154,7 @@
                         osc.start(now + n.start);
                         osc.stop(now + n.start + n.dur + 0.02);
                     });
-                } catch (err) {
-                    // Lewati bunyi jika audio diblokir browser
-                }
+                } catch (err) {}
             }
 
             function formatAmountForSpeech(amount) {
@@ -3040,6 +3311,64 @@
                 };
             }
 
+            function pushConfigAndBranchesToCloud() {
+                if (!cloudState.db || !cloudState.fns || cloudState.suppressRemoteEcho) return;
+                try {
+                    var fns = cloudState.fns;
+                    var configRef = fns.doc(cloudState.db, "qris_warung_pintar", "merchant_config");
+                    fns.setDoc(configRef, {
+                        warungName: state.warungName,
+                        ownerName: state.ownerName,
+                        nmid: state.nmid,
+                        masterPin: state.masterPin,
+                        callCenterName: state.callCenterName,
+                        callCenterPhone: state.callCenterPhone,
+                        callCenterHours: state.callCenterHours,
+                        callCenterNotes: state.callCenterNotes,
+                        voiceEnabled: state.voiceEnabled,
+                        speechRate: state.speechRate,
+                        speechFormat: state.speechFormat,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true }).catch(function () {});
+
+                    authState.branches.forEach(function (b) {
+                        if (!b || !b.id) return;
+                        var branchRef = fns.doc(cloudState.db, "qris_warung_pintar_branches", String(b.id));
+                        fns.setDoc(branchRef, {
+                            id: String(b.id),
+                            fullName: String(b.fullName || ""),
+                            merchantName: String(b.merchantName || ""),
+                            address: String(b.address || ""),
+                            phone: String(b.phone || ""),
+                            pin: normalizePin(b.pin),
+                            status: b.status === "inactive" ? "inactive" : "active",
+                            active: b.active !== false && b.status !== "inactive",
+                            pinEnabled: isBranchPinEnabled(b),
+                            pinDisabled: !isBranchPinEnabled(b),
+                            createdAt: String(b.createdAt || new Date().toISOString())
+                        }, { merge: true }).catch(function () {});
+                    });
+                } catch (err) {}
+            }
+
+            function pushTransactionToCloud(trx) {
+                if (!cloudState.db || !cloudState.fns || !trx || !trx.id || cloudState.suppressRemoteEcho) return;
+                try {
+                    var fns = cloudState.fns;
+                    var trxRef = fns.doc(cloudState.db, "qris_warung_pintar_transactions", String(trx.id));
+                    fns.setDoc(trxRef, normalizeTransactionRecord(trx), { merge: true }).catch(function () {});
+                } catch (err) {}
+            }
+
+            function deleteBranchFromCloud(branchId) {
+                if (!cloudState.db || !cloudState.fns || !branchId) return;
+                try {
+                    var fns = cloudState.fns;
+                    var branchRef = fns.doc(cloudState.db, "qris_warung_pintar_branches", String(branchId));
+                    fns.deleteDoc(branchRef).catch(function () {});
+                } catch (err) {}
+            }
+
             function recordPayment(amount, method, payer, note) {
                 try {
                     var cleanAmt = Math.round(Number(amount) || 0);
@@ -3070,6 +3399,7 @@
 
                     state.transactions.unshift(trx);
                     safeSet("qris_wp_trx", JSON.stringify(state.transactions));
+                    pushTransactionToCloud(trx);
 
                     state.trxPage = 1;
                     renderTransactions();
@@ -3088,11 +3418,16 @@
                 safeSet("qris_wp_nmid", state.nmid);
                 safeSet("master_admin_pin", state.masterPin);
                 safeSet("masterPin", state.masterPin);
+                safeSet("qris_wp_cc_name", state.callCenterName);
+                safeSet("qris_wp_cc_phone", state.callCenterPhone);
+                safeSet("qris_wp_cc_hours", state.callCenterHours);
+                safeSet("qris_wp_cc_notes", state.callCenterNotes);
                 safeSet("qris_wp_voice", String(state.voiceEnabled));
                 safeSet("qris_wp_rate", String(state.speechRate));
                 safeSet("qris_wp_format", state.speechFormat);
                 safeSet("qris_wp_trx", JSON.stringify(state.transactions));
                 safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                pushConfigAndBranchesToCloud();
             }
 
             function loadPersistedState() {
@@ -3100,6 +3435,13 @@
                     state.warungName = safeGet("qris_wp_warung", DEFAULT_MERCHANT.warungName);
                     state.ownerName = safeGet("qris_wp_owner", DEFAULT_MERCHANT.ownerName);
                     state.nmid = safeGet("qris_wp_nmid", DEFAULT_MERCHANT.nmid);
+                    state.callCenterName = safeGet("qris_wp_cc_name", "Helpdesk Pusat Warung Pintar");
+                    state.callCenterPhone = safeGet("qris_wp_cc_phone", "");
+                    state.callCenterHours = safeGet("qris_wp_cc_hours", "Senin - Minggu, 08:00 - 21:00 WIB");
+                    state.callCenterNotes = safeGet(
+                        "qris_wp_cc_notes",
+                        "Hubungi pusat jika terjadi kendala transaksi QRIS atau pembaruan data cabang."
+                    );
 
                     var savedMasterPin = normalizePin(
                         safeGet("master_admin_pin", safeGet("masterPin", DEFAULT_MASTER_PIN))
@@ -3119,11 +3461,13 @@
                     var rawBranches = safeGet("qris_wp_branches", null);
                     if (rawBranches !== null) {
                         var parsedBranches = JSON.parse(rawBranches);
-                        authState.branches = Array.isArray(parsedBranches) ? parsedBranches : [];
+                        authState.branches = (Array.isArray(parsedBranches) && parsedBranches.length > 0)
+                            ? parsedBranches
+                            : SEED_BRANCHES.slice();
                     } else {
                         authState.branches = SEED_BRANCHES.slice();
-                        safeSet("qris_wp_branches", JSON.stringify(authState.branches));
                     }
+                    safeSet("qris_wp_branches", JSON.stringify(authState.branches));
 
                     var rawTrx = safeGet("qris_wp_trx", null);
                     if (rawTrx !== null) {
@@ -3140,6 +3484,120 @@
                     authState.branches = SEED_BRANCHES.slice();
                     showToast("Data awal dimuat dalam mode aman.", "error");
                 }
+            }
+
+            // Call Center Helpers & Sinkronisasi Tampilan Admin Cabang
+            function normalizePhoneForWhatsApp(rawPhone) {
+                var digits = String(rawPhone || "").replace(/\D/g, "");
+                if (!digits) return "";
+                if (digits.indexOf("0") === 0) return "62" + digits.slice(1);
+                if (digits.indexOf("8") === 0) return "62" + digits;
+                return digits;
+            }
+
+            function normalizePhoneForTel(rawPhone) {
+                return String(rawPhone || "").trim().replace(/[^\d+]/g, "");
+            }
+
+            function buildCallCenterWhatsAppUrl() {
+                var waDigits = normalizePhoneForWhatsApp(state.callCenterPhone);
+                if (!waDigits) return "#";
+                var activeBr = getActiveBranchRecord();
+                var branchLabel = activeBr ? activeBr.merchantName : state.warungName;
+                var picLabel = activeBr ? activeBr.fullName : state.ownerName;
+                var branchIdLabel = activeBr ? activeBr.id : (authState.activeBranchId || DEFAULT_MERCHANT.id);
+                var message =
+                    "Halo " + (state.callCenterName || "Call Center Pusat") + ",\n" +
+                    "Saya Admin Cabang *" + branchLabel + "* (" + branchIdLabel + ") a.n. *" + picLabel + "*.\n" +
+                    "Mohon bantuan koordinasi terkait operasional / QRIS Warung Pintar.";
+                return "https://wa.me/" + waDigits + "?text=" + encodeURIComponent(message);
+            }
+
+            function renderCallCenterUI() {
+                try {
+                    var isMaster = authState.sessionRole === ROLE_MASTER;
+                    var isBranch = authState.sessionRole === ROLE_BRANCH;
+
+                    var masterFormSec = document.getElementById("callCenterMasterFormSection");
+                    var branchReadonlySec = document.getElementById("callCenterBranchReadonlySection");
+                    var workspaceBanner = document.getElementById("branchCallCenterWorkspaceCard");
+
+                    if (masterFormSec) masterFormSec.classList.toggle("hidden", !isMaster);
+                    if (branchReadonlySec) branchReadonlySec.classList.toggle("hidden", !isBranch);
+
+                    var ccNameInput = document.getElementById("settingCcName");
+                    var ccPhoneInput = document.getElementById("settingCcPhone");
+                    var ccHoursInput = document.getElementById("settingCcHours");
+                    var ccNotesInput = document.getElementById("settingCcNotes");
+
+                    if (ccNameInput && document.activeElement !== ccNameInput) {
+                        ccNameInput.value = state.callCenterName || "";
+                    }
+                    if (ccPhoneInput && document.activeElement !== ccPhoneInput) {
+                        ccPhoneInput.value = state.callCenterPhone || "";
+                    }
+                    if (ccHoursInput && document.activeElement !== ccHoursInput) {
+                        ccHoursInput.value = state.callCenterHours || "";
+                    }
+                    if (ccNotesInput && document.activeElement !== ccNotesInput) {
+                        ccNotesInput.value = state.callCenterNotes || "";
+                    }
+
+                    var rawPhone = String(state.callCenterPhone || "").trim();
+                    var hasPhone = rawPhone.length > 0;
+                    var displayTitle = String(state.callCenterName || "").trim() || "Helpdesk Pusat Warung Pintar";
+                    var displayPhone = hasPhone ? rawPhone : "Belum diatur oleh Master Admin";
+                    var displayHours = String(state.callCenterHours || "").trim()
+                        ? ("Jam Operasional: " + state.callCenterHours)
+                        : "Jam Operasional: Setiap Hari";
+                    var displayNotes = String(state.callCenterNotes || "").trim();
+
+                    var waUrl = buildCallCenterWhatsAppUrl();
+                    var telHref = hasPhone ? ("tel:" + normalizePhoneForTel(rawPhone)) : "#";
+
+                    var showWorkspaceBanner = isBranch && (state.currentPage === "qris" || state.currentPage === "kasir");
+                    if (workspaceBanner) {
+                        workspaceBanner.classList.toggle("hidden", !showWorkspaceBanner);
+                    }
+
+                    var bannerTitleEl = document.getElementById("ccBannerPicTitle");
+                    var bannerPhoneEl = document.getElementById("ccBannerPhoneDisplay");
+                    var bannerHoursEl = document.getElementById("ccBannerHoursText");
+                    var bannerNoteEl = document.getElementById("ccBannerNoteText");
+                    var bannerActionsEl = document.getElementById("ccBannerActionsRow");
+                    var btnBannerWa = document.getElementById("btnCcBannerWa");
+                    var btnBannerTel = document.getElementById("btnCcBannerTel");
+
+                    if (bannerTitleEl) bannerTitleEl.textContent = displayTitle;
+                    if (bannerPhoneEl) bannerPhoneEl.textContent = displayPhone;
+                    if (bannerHoursEl) bannerHoursEl.textContent = displayHours;
+                    if (bannerNoteEl) {
+                        bannerNoteEl.textContent = displayNotes;
+                        bannerNoteEl.classList.toggle("hidden", !displayNotes);
+                    }
+                    if (bannerActionsEl) bannerActionsEl.classList.toggle("hidden", !hasPhone);
+                    if (btnBannerWa) btnBannerWa.href = waUrl;
+                    if (btnBannerTel) btnBannerTel.href = telHref;
+
+                    var settingTitleEl = document.getElementById("ccSettingPicTitle");
+                    var settingPhoneEl = document.getElementById("ccSettingPhoneDisplay");
+                    var settingHoursEl = document.getElementById("ccSettingHoursText");
+                    var settingNoteEl = document.getElementById("ccSettingNoteText");
+                    var settingActionsEl = document.getElementById("ccSettingActionsRow");
+                    var btnSettingWa = document.getElementById("btnCcSettingWa");
+                    var btnSettingTel = document.getElementById("btnCcSettingTel");
+
+                    if (settingTitleEl) settingTitleEl.textContent = displayTitle;
+                    if (settingPhoneEl) settingPhoneEl.textContent = displayPhone;
+                    if (settingHoursEl) settingHoursEl.textContent = displayHours;
+                    if (settingNoteEl) {
+                        settingNoteEl.textContent = displayNotes;
+                        settingNoteEl.classList.toggle("hidden", !displayNotes);
+                    }
+                    if (settingActionsEl) settingActionsEl.classList.toggle("hidden", !hasPhone);
+                    if (btnSettingWa) btnSettingWa.href = waUrl;
+                    if (btnSettingTel) btnSettingTel.href = telHref;
+                } catch (err) {}
             }
 
             function syncUI() {
@@ -3173,6 +3631,7 @@
                         if (masterPinSec) masterPinSec.classList.add("hidden");
                     }
                     syncMasterPinGateUI();
+                    renderCallCenterUI();
                     roleBadge.textContent = roleLabel;
                     document.getElementById("headerActiveContext").textContent =
                         state.warungName + " • " + roleLabel + " • A.N. " + state.ownerName;
@@ -3254,6 +3713,7 @@
                         btn.classList.toggle("active", btn.getAttribute("data-page") === pageKey);
                     });
 
+                    renderCallCenterUI();
                     closeSidebar();
                     if (pageKey === "qris") {
                         renderQrStandee();
@@ -3348,7 +3808,6 @@
                         return;
                     }
 
-                    // 1. Cek Master Admin (default awal '882026', dapat diubah oleh Master Admin)
                     var activeMasterPin = getActiveMasterPin();
                     if (clean === activeMasterPin) {
                         authState.sessionRole = ROLE_MASTER;
@@ -3366,7 +3825,6 @@
                         return;
                     }
 
-                    // 2. Cek cabang berdasarkan PIN 6 digit
                     var branch = null;
                     for (var i = 0; i < authState.branches.length; i++) {
                         var item = authState.branches[i];
@@ -3467,6 +3925,34 @@
                 document.getElementById("confirmDeleteModal").classList.add("hidden");
             }
 
+            // Modal Tambah Cabang & Edit PIN (Master Admin)
+            function openAddBranchModal() {
+                document.getElementById("modalAddFullName").value = "";
+                document.getElementById("modalAddMerchantName").value = "";
+                document.getElementById("modalAddAddress").value = "";
+                document.getElementById("modalAddPhone").value = "";
+                document.getElementById("modalAddPinInput").value = generateUniqueSixDigitPin();
+                document.getElementById("addBranchModal").classList.remove("hidden");
+            }
+
+            function closeAddBranchModal() {
+                document.getElementById("addBranchModal").classList.add("hidden");
+            }
+
+            function openEditPinModal(branch) {
+                if (!branch) return;
+                authState.editingPinBranchId = branch.id;
+                document.getElementById("editPinModalSubtitle").textContent =
+                    "Cabang: " + branch.merchantName + " (" + branch.fullName + ")";
+                document.getElementById("modalEditPinInput").value = normalizePin(branch.pin);
+                document.getElementById("editPinModal").classList.remove("hidden");
+            }
+
+            function closeEditPinModal() {
+                authState.editingPinBranchId = null;
+                document.getElementById("editPinModal").classList.add("hidden");
+            }
+
             function renderBranchesList() {
                 try {
                     var container = document.getElementById("branchListContainer");
@@ -3512,16 +3998,14 @@
                             ? "Menampilkan 0 dari 0 cabang"
                             : "Menampilkan " + (start + 1) + "-" + end + " dari " + totalItems + " cabang";
                     }
-                    if (indEl) {
-                        indEl.textContent = "Hal " + authState.branchPage + " / " + totalPages;
-                    }
+                    if (indEl) indEl.textContent = "Hal " + authState.branchPage + " / " + totalPages;
                     if (prevBtn) prevBtn.disabled = authState.branchPage <= 1;
                     if (nextBtn) nextBtn.disabled = authState.branchPage >= totalPages;
 
                     if (pageItems.length === 0) {
                         container.innerHTML = query
                             ? '<div class="empty-state">Tidak ada cabang yang cocok dengan pencarian "' + escapeHtml(query) + '".</div>'
-                            : '<div class="empty-state">Belum ada cabang terdaftar. Klik tombol Daftar Cabang Baru.</div>';
+                            : '<div class="empty-state">Belum ada cabang terdaftar. Klik tombol + Tambah Cabang.</div>';
                         return;
                     }
 
@@ -3589,9 +4073,39 @@
                             b.status = nextActive ? "active" : "inactive";
                             b.active = nextActive;
                             safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                            pushConfigAndBranchesToCloud();
                             renderBranchesList();
                             renderPinManagerList();
                             showToast("Status cabang " + b.merchantName + " diubah menjadi " + (nextActive ? "Aktif" : "Nonaktif") + ".", "success");
+                        });
+                    });
+
+                    container.querySelectorAll(".btn-delete-branch-row").forEach(function (btn) {
+                        btn.addEventListener("click", function () {
+                            var b = findBranchRowById(btn.getAttribute("data-id"));
+                            if (!b) return;
+                            openInAppConfirm(
+                                "Hapus Cabang?",
+                                "Cabang '" + b.merchantName + "' (" + b.fullName + ") akan dihapus.",
+                                "Ya, Hapus",
+                                function () {
+                                    authState.branches = authState.branches.filter(function (item) {
+                                        return item && item.id !== b.id;
+                                    });
+                                    if (authState.activeBranchId === b.id) {
+                                        authState.activeBranchId = null;
+                                        state.warungName = DEFAULT_MERCHANT.warungName;
+                                        state.ownerName = DEFAULT_MERCHANT.ownerName;
+                                    }
+                                    safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                                    deleteBranchFromCloud(b.id);
+                                    syncUI();
+                                    renderQrStandee();
+                                    renderBranchesList();
+                                    renderPinManagerList();
+                                    showToast("Cabang " + b.merchantName + " dihapus.", "success");
+                                }
+                            );
                         });
                     });
                 } catch (err) {
@@ -3611,11 +4125,26 @@
                     var sizeSel = document.getElementById("pinPageSizeSelect");
                     if (!container) return;
 
+                    var allList = Array.isArray(authState.branches) ? authState.branches : [];
+                    var activePinCount = 0;
+                    var disabledPinCount = 0;
+                    allList.forEach(function (item) {
+                        if (!item) return;
+                        if (isBranchPinEnabled(item)) activePinCount++;
+                        else disabledPinCount++;
+                    });
+
+                    var kpiTotal = document.getElementById("pinKpiTotalBranches");
+                    var kpiActive = document.getElementById("pinKpiActivePins");
+                    var kpiDisabled = document.getElementById("pinKpiDisabledPins");
+                    if (kpiTotal) kpiTotal.textContent = String(allList.length);
+                    if (kpiActive) kpiActive.textContent = String(activePinCount);
+                    if (kpiDisabled) kpiDisabled.textContent = String(disabledPinCount);
+
                     if (globalBtn) {
                         globalBtn.textContent = authState.globalPinRevealed ? "Sembunyikan Semua PIN" : "Tampilkan Semua PIN";
                     }
 
-                    var allList = Array.isArray(authState.branches) ? authState.branches : [];
                     var query = (searchInput ? searchInput.value : authState.pinSearchQuery || "").trim().toLowerCase();
                     var list = allList.filter(function (b) {
                         if (!b) return false;
@@ -3648,9 +4177,7 @@
                             ? "Menampilkan 0 dari 0 PIN cabang"
                             : "Menampilkan " + (start + 1) + "-" + end + " dari " + totalItems + " PIN cabang";
                     }
-                    if (indEl) {
-                        indEl.textContent = "Hal " + authState.pinPage + " / " + totalPages;
-                    }
+                    if (indEl) indEl.textContent = "Hal " + authState.pinPage + " / " + totalPages;
                     if (prevBtn) prevBtn.disabled = authState.pinPage <= 1;
                     if (nextBtn) nextBtn.disabled = authState.pinPage >= totalPages;
 
@@ -3661,118 +4188,10 @@
                         return;
                     }
 
-                    container.innerHTML = pageItems.map(function (b, idx) {
-                        var globalIdx = start + idx;
-                        var isActive = (b.status !== "inactive") && (b.active !== false);
-                        var pinOk = isBranchPinEnabled(b);
-                        var isCurrent = authState.activeBranchId === b.id;
-
-                        return (
-                            '<div class="branch-card-item">' +
-                                '<div style="min-width:0;">' +
-                                    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
-                                        '<span style="font-size:15px;font-weight:800;">' + escapeHtml(b.merchantName) + '</span>' +
-                                        '<span class="branch-status-pill ' + (isActive ? "active" : "inactive") + '">' +
-                                            (isActive ? "Aktif" : "Nonaktif") +
-                                        '</span>' +
-                                        '<span class="' + (pinOk ? "pin-enabled-pill" : "pin-disabled-pill") + '">' +
-                                            (pinOk ? "PIN Aktif" : "PIN Nonaktif") +
-                                        '</span>' +
-                                        (isCurrent ? '<span class="trx-method-badge">Cabang Aktif</span>' : '') +
-                                    '</div>' +
-                                    '<div class="trx-sub" style="margin-top:4px;">' +
-                                        'Admin: <strong>' + escapeHtml(b.fullName) + '</strong> • WA/Telp: ' + escapeHtml(b.phone) +
-                                    '</div>' +
-                                    '<div class="trx-sub">Alamat: ' + escapeHtml(b.address) + '</div>' +
-                                '</div>' +
-                                '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
-                                    '<button type="button" class="btn btn-soft-emerald btn-switch-branch" data-idx="' + globalIdx + '">Buka Cabang</button>' +
-                                    '<button type="button" class="btn btn-outline btn-toggle-branch-status" data-idx="' + globalIdx + '">' +
-                                        (isActive ? "Nonaktifkan" : "Aktifkan") +
-                                    '</button>' +
-                                '</div>' +
-                            '</div>'
-                        );
-                    }).join("");
-
-                    container.querySelectorAll(".btn-switch-branch").forEach(function (btn) {
-                        btn.addEventListener("click", function () {
-                            var b = authState.branches[parseInt(btn.getAttribute("data-idx"), 10)];
-                            if (!b) return;
-                            authState.activeBranchId = b.id;
-                            applyBranchContext(b);
-                            syncUI();
-                            renderQrStandee();
-                            renderBranchesList();
-                            showToast("Tampilan beralih ke " + b.merchantName, "success");
-                        });
-                    });
-
-                    container.querySelectorAll(".btn-toggle-branch-status").forEach(function (btn) {
-                        btn.addEventListener("click", function () {
-                            var b = authState.branches[parseInt(btn.getAttribute("data-idx"), 10)];
-                            if (!b) return;
-                            var nextActive = (b.status === "inactive" || b.active === false);
-                            b.status = nextActive ? "active" : "inactive";
-                            b.active = nextActive;
-                            safeSet("qris_wp_branches", JSON.stringify(authState.branches));
-                            renderBranchesList();
-                            renderPinManagerList();
-                            showToast("Status cabang " + b.merchantName + " diubah menjadi " + (nextActive ? "Aktif" : "Nonaktif") + ".", "success");
-                        });
-                    });
-                } catch (err) {
-                    showToast("Gagal merender daftar cabang.", "error");
-                }
-            }
-
-            function renderPinManagerList() {
-                try {
-                    var container = document.getElementById("pinManagerListContainer");
-                    var globalBtn = document.getElementById("btnToggleGlobalPinVisibility");
-                    var infoEl = document.getElementById("pinPaginationInfo");
-                    var indEl = document.getElementById("pinPageIndicator");
-                    var prevBtn = document.getElementById("btnPinPrevPage");
-                    var nextBtn = document.getElementById("btnPinNextPage");
-                    var sizeSel = document.getElementById("pinPageSizeSelect");
-                    if (!container) return;
-
-                    if (globalBtn) {
-                        globalBtn.textContent = authState.globalPinRevealed ? "Sembunyikan Semua PIN" : "Tampilkan Semua PIN";
-                    }
-
-                    var list = Array.isArray(authState.branches) ? authState.branches : [];
-                    var pageSize = parseInt(sizeSel ? sizeSel.value : "10", 10) || 10;
-                    var totalItems = list.length;
-                    var totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-                    if (authState.pinPage > totalPages) authState.pinPage = totalPages;
-                    if (authState.pinPage < 1) authState.pinPage = 1;
-
-                    var start = (authState.pinPage - 1) * pageSize;
-                    var end = Math.min(start + pageSize, totalItems);
-                    var pageItems = list.slice(start, end);
-
-                    if (infoEl) {
-                        infoEl.textContent = totalItems === 0
-                            ? "Menampilkan 0 dari 0 PIN cabang"
-                            : "Menampilkan " + (start + 1) + "-" + end + " dari " + totalItems + " PIN cabang";
-                    }
-                    if (indEl) {
-                        indEl.textContent = "Hal " + authState.pinPage + " / " + totalPages;
-                    }
-                    if (prevBtn) prevBtn.disabled = authState.pinPage <= 1;
-                    if (nextBtn) nextBtn.disabled = authState.pinPage >= totalPages;
-
-                    if (pageItems.length === 0) {
-                        container.innerHTML = '<div class="empty-state">Belum ada PIN cabang yang terdaftar.</div>';
-                        return;
-                    }
-
                     container.innerHTML = pageItems.map(function (b) {
                         var pinOk = isBranchPinEnabled(b);
                         var isActive = (b.status !== "inactive") && (b.active !== false);
                         var isRevealed = authState.globalPinRevealed || !!authState.revealedPinIds[b.id];
-                        var isEditing = authState.editingPinBranchId === b.id;
                         var pinDisplay = isRevealed ? escapeHtml(b.pin) : "••••••";
 
                         return (
@@ -3800,20 +4219,9 @@
                                         '<button type="button" class="btn ' + (!pinOk ? "btn-soft-emerald" : "btn-outline") + ' btn-pm-toggle-pin" data-id="' + escapeHtml(b.id) + '">' +
                                             (!pinOk ? "Aktifkan PIN" : "Nonaktifkan PIN") +
                                         '</button>' +
-                                        '<button type="button" class="btn btn-outline btn-pm-edit" data-id="' + escapeHtml(b.id) + '">' +
-                                            (isEditing ? "Batal Edit" : "Edit PIN") +
-                                        '</button>' +
+                                        '<button type="button" class="btn btn-outline btn-pm-edit" data-id="' + escapeHtml(b.id) + '">Edit / Acak PIN</button>' +
                                         '<button type="button" class="btn btn-danger-soft btn-pm-delete" data-id="' + escapeHtml(b.id) + '">Hapus Cabang</button>' +
                                     '</div>' +
-                                    (isEditing
-                                        ? (
-                                            '<div class="inline-edit-box">' +
-                                                '<input type="text" inputmode="numeric" maxlength="6" class="text-input pm-edit-input" style="max-width:165px;letter-spacing:3px;text-align:center;" value="' + escapeHtml(b.pin) + '" placeholder="6 digit PIN">' +
-                                                '<button type="button" class="btn btn-outline btn-pm-random" data-id="' + escapeHtml(b.id) + '">Acak PIN</button>' +
-                                                '<button type="button" class="btn btn-emerald btn-pm-save-pin" data-id="' + escapeHtml(b.id) + '">Simpan PIN</button>' +
-                                            '</div>'
-                                        )
-                                        : '') +
                                 '</div>' +
                             '</div>'
                         );
@@ -3856,6 +4264,7 @@
                             var nextPinState = !isBranchPinEnabled(b);
                             setBranchPinEnabled(b, nextPinState);
                             safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                            pushConfigAndBranchesToCloud();
                             renderPinManagerList();
                             renderBranchesList();
                             showToast(
@@ -3869,51 +4278,8 @@
 
                     container.querySelectorAll(".btn-pm-edit").forEach(function (btn) {
                         btn.addEventListener("click", function () {
-                            var id = btn.getAttribute("data-id");
-                            authState.editingPinBranchId = authState.editingPinBranchId === id ? null : id;
-                            renderPinManagerList();
-                        });
-                    });
-
-                    container.querySelectorAll(".btn-pm-random").forEach(function (btn) {
-                        btn.addEventListener("click", function () {
-                            var card = btn.closest(".branch-card-item");
-                            var input = card ? card.querySelector(".pm-edit-input") : null;
-                            if (input) {
-                                input.value = generateUniqueSixDigitPin();
-                            }
-                        });
-                    });
-
-                    container.querySelectorAll(".btn-pm-save-pin").forEach(function (btn) {
-                        btn.addEventListener("click", function () {
                             var b = findBranchById(btn.getAttribute("data-id"));
-                            var card = btn.closest(".branch-card-item");
-                            var input = card ? card.querySelector(".pm-edit-input") : null;
-                            if (!b || !input) return;
-
-                            var nextPin = normalizePin(input.value);
-                            if (nextPin.length !== 6) {
-                                showToast("PIN harus tepat 6 digit angka.", "error");
-                                return;
-                            }
-                            if (nextPin === getActiveMasterPin() || nextPin === DEFAULT_MASTER_PIN) {
-                                showToast("PIN cabang tidak boleh sama dengan PIN Master Admin.", "error");
-                                return;
-                            }
-                            var duplicate = authState.branches.some(function (other) {
-                                return other && other.id !== b.id && normalizePin(other.pin) === nextPin;
-                            });
-                            if (duplicate) {
-                                showToast("PIN 6 digit tersebut sudah dipakai cabang lain.", "error");
-                                return;
-                            }
-
-                            b.pin = nextPin;
-                            authState.editingPinBranchId = null;
-                            safeSet("qris_wp_branches", JSON.stringify(authState.branches));
-                            renderPinManagerList();
-                            showToast("PIN cabang " + b.merchantName + " berhasil diperbarui.", "success");
+                            if (b) openEditPinModal(b);
                         });
                     });
 
@@ -3934,11 +4300,9 @@
                                         state.warungName = DEFAULT_MERCHANT.warungName;
                                         state.ownerName = DEFAULT_MERCHANT.ownerName;
                                     }
-                                    if (authState.editingPinBranchId === b.id) {
-                                        authState.editingPinBranchId = null;
-                                    }
                                     delete authState.revealedPinIds[b.id];
                                     safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                                    deleteBranchFromCloud(b.id);
                                     syncUI();
                                     renderQrStandee();
                                     renderPinManagerList();
@@ -4099,9 +4463,7 @@
                         : "Menampilkan " + (start + 1) + "-" + end + " dari " + totalFiltered + " transaksi";
 
                     var trxInd = document.getElementById("trxPageIndicator");
-                    if (trxInd) {
-                        trxInd.textContent = "Hal " + state.trxPage + " / " + totalPages;
-                    }
+                    if (trxInd) trxInd.textContent = "Hal " + state.trxPage + " / " + totalPages;
 
                     document.getElementById("btnPrevPage").disabled = state.trxPage <= 1;
                     document.getElementById("btnNextPage").disabled = state.trxPage >= totalPages;
@@ -4158,6 +4520,10 @@
                             warungName: state.warungName,
                             ownerName: state.ownerName,
                             nmid: state.nmid,
+                            callCenterName: state.callCenterName,
+                            callCenterPhone: state.callCenterPhone,
+                            callCenterHours: state.callCenterHours,
+                            callCenterNotes: state.callCenterNotes,
                             voiceEnabled: state.voiceEnabled,
                             speechRate: state.speechRate,
                             speechFormat: state.speechFormat
@@ -4191,6 +4557,10 @@
                                 if (data.merchant.warungName) state.warungName = String(data.merchant.warungName);
                                 if (data.merchant.ownerName) state.ownerName = String(data.merchant.ownerName);
                                 if (data.merchant.nmid) state.nmid = String(data.merchant.nmid);
+                                if (typeof data.merchant.callCenterName === "string") state.callCenterName = data.merchant.callCenterName;
+                                if (typeof data.merchant.callCenterPhone === "string") state.callCenterPhone = data.merchant.callCenterPhone;
+                                if (typeof data.merchant.callCenterHours === "string") state.callCenterHours = data.merchant.callCenterHours;
+                                if (typeof data.merchant.callCenterNotes === "string") state.callCenterNotes = data.merchant.callCenterNotes;
                                 if (typeof data.merchant.voiceEnabled === "boolean") state.voiceEnabled = data.merchant.voiceEnabled;
                                 var r = parseFloat(data.merchant.speechRate);
                                 if (Number.isFinite(r) && r >= 0.5 && r <= 2) state.speechRate = r;
@@ -4228,6 +4598,9 @@
 
             function runSyncData() {
                 persistAllState();
+                state.transactions.forEach(function (tx) {
+                    pushTransactionToCloud(tx);
+                });
                 syncUI();
                 showToast(
                     "Sinkronisasi selesai: " + state.transactions.length + " transaksi & " + authState.branches.length + " cabang tersimpan.",
@@ -4370,6 +4743,7 @@
                         authState.lastCreatedPin = pin;
                         authState.draftBranchPin = generateUniqueSixDigitPin();
                         safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                        pushConfigAndBranchesToCloud();
 
                         document.getElementById("regGeneratedPinPreview").textContent = authState.draftBranchPin;
                         document.getElementById("regCreatedPinCode").textContent = pin;
@@ -4420,6 +4794,7 @@
                 function toggleVoiceEnabled() {
                     state.voiceEnabled = !state.voiceEnabled;
                     safeSet("qris_wp_voice", String(state.voiceEnabled));
+                    pushConfigAndBranchesToCloud();
                     syncUI();
                     showToast(state.voiceEnabled ? "Suara Soundbox diaktifkan." : "Suara Soundbox dinonaktifkan.", "info");
                 }
@@ -4591,7 +4966,7 @@
                     recordPayment(amt, state.selectedWebhookMethod, payer, "Notifikasi Webhook");
                 });
 
-                // Halaman 4 & 6 & 7: Pencarian, Filter & Pagination (5, 10, 15, 20, 25, 50, 100)
+                // Halaman 4, 6 & 7: Pencarian, Filter & Pagination
                 document.getElementById("searchTrxInput").addEventListener("input", function () {
                     state.trxPage = 1;
                     renderTransactions();
@@ -4620,14 +4995,122 @@
                     }
                 });
 
-                document.getElementById("btnCabangGoRegister").addEventListener("click", function () {
-                    lockSession();
-                    setAuthTab("register");
+                document.getElementById("btnNextPage").addEventListener("click", function () {
+                    state.trxPage += 1;
+                    renderTransactions();
                 });
 
-                document.getElementById("btnPinGoRegister").addEventListener("click", function () {
-                    lockSession();
-                    setAuthTab("register");
+                // Tambah Cabang & Edit PIN Modals
+                document.getElementById("btnCabangGoRegister").addEventListener("click", openAddBranchModal);
+                document.getElementById("btnPinGoRegister").addEventListener("click", openAddBranchModal);
+                document.getElementById("btnCloseAddBranchModal").addEventListener("click", closeAddBranchModal);
+                document.getElementById("btnModalAddRandomPin").addEventListener("click", function () {
+                    document.getElementById("modalAddPinInput").value = generateUniqueSixDigitPin();
+                });
+
+                document.getElementById("btnSaveAddBranchModal").addEventListener("click", function () {
+                    var fullName = document.getElementById("modalAddFullName").value.trim();
+                    var merchantName = document.getElementById("modalAddMerchantName").value.trim();
+                    var address = document.getElementById("modalAddAddress").value.trim();
+                    var phone = document.getElementById("modalAddPhone").value.trim();
+                    var pin = normalizePin(document.getElementById("modalAddPinInput").value);
+
+                    if (!fullName || !merchantName || !address || !phone) {
+                        showToast("Lengkapi semua kolom data cabang.", "error");
+                        return;
+                    }
+                    if (pin.length !== 6) {
+                        showToast("PIN harus tepat 6 digit angka.", "error");
+                        return;
+                    }
+                    if (pin === getActiveMasterPin() || pin === DEFAULT_MASTER_PIN) {
+                        showToast("PIN cabang tidak boleh sama dengan PIN Master Admin.", "error");
+                        return;
+                    }
+                    var dup = authState.branches.some(function (other) {
+                        return other && normalizePin(other.pin) === pin;
+                    });
+                    if (dup) {
+                        showToast("PIN 6 digit tersebut sudah dipakai cabang lain.", "error");
+                        return;
+                    }
+
+                    var newBranch = {
+                        id: "BR-" + Date.now().toString().slice(-6),
+                        fullName: fullName,
+                        merchantName: merchantName,
+                        address: address,
+                        phone: phone,
+                        pin: pin,
+                        status: "active",
+                        active: true,
+                        pinEnabled: true,
+                        pinDisabled: false,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    authState.branches.unshift(newBranch);
+                    safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                    pushConfigAndBranchesToCloud();
+                    closeAddBranchModal();
+                    syncUI();
+                    renderBranchesList();
+                    renderPinManagerList();
+                    renderTransactions();
+                    showToast("Cabang " + merchantName + " ditambahkan (PIN: " + pin + ").", "success");
+                });
+
+                document.getElementById("btnCloseEditPinModal").addEventListener("click", closeEditPinModal);
+                document.getElementById("btnModalEditRandomPin").addEventListener("click", function () {
+                    document.getElementById("modalEditPinInput").value = generateUniqueSixDigitPin();
+                });
+
+                document.getElementById("btnSaveEditPinModal").addEventListener("click", function () {
+                    var targetId = authState.editingPinBranchId;
+                    var b = null;
+                    for (var i = 0; i < authState.branches.length; i++) {
+                        if (authState.branches[i] && authState.branches[i].id === targetId) {
+                            b = authState.branches[i];
+                            break;
+                        }
+                    }
+                    if (!b) {
+                        closeEditPinModal();
+                        return;
+                    }
+
+                    var nextPin = normalizePin(document.getElementById("modalEditPinInput").value);
+                    if (nextPin.length !== 6) {
+                        showToast("PIN harus tepat 6 digit angka.", "error");
+                        return;
+                    }
+                    if (nextPin === getActiveMasterPin() || nextPin === DEFAULT_MASTER_PIN) {
+                        showToast("PIN cabang tidak boleh sama dengan PIN Master Admin.", "error");
+                        return;
+                    }
+                    var duplicate = authState.branches.some(function (other) {
+                        return other && other.id !== b.id && normalizePin(other.pin) === nextPin;
+                    });
+                    if (duplicate) {
+                        showToast("PIN 6 digit tersebut sudah dipakai cabang lain.", "error");
+                        return;
+                    }
+
+                    b.pin = nextPin;
+                    safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                    pushConfigAndBranchesToCloud();
+                    closeEditPinModal();
+                    renderPinManagerList();
+                    renderBranchesList();
+                    showToast("PIN cabang " + b.merchantName + " diperbarui menjadi " + nextPin + ".", "success");
+                });
+
+                document.getElementById("btnShortcutSetCallCenter").addEventListener("click", function () {
+                    navigateTo("pengaturan");
+                    window.setTimeout(function () {
+                        var el = document.getElementById("settingCcPhone");
+                        if (el) el.focus();
+                    }, 120);
                 });
 
                 document.getElementById("btnMasterBackToMainMerchant").addEventListener("click", function () {
@@ -4745,16 +5228,12 @@
                     }
 
                     saveActiveMasterPin(newPin);
+                    pushConfigAndBranchesToCloud();
                     authState.masterPinGateUnlocked = false;
                     if (newPinEl) newPinEl.value = "";
                     if (confPinEl) confPinEl.value = "";
                     syncMasterPinGateUI();
                     showToast("PIN Master Admin berhasil diperbarui dan disimpan.", "success");
-                });
-
-                document.getElementById("btnNextPage").addEventListener("click", function () {
-                    state.trxPage += 1;
-                    renderTransactions();
                 });
 
                 document.getElementById("btnAskClearHistory").addEventListener("click", function () {
@@ -4771,14 +5250,27 @@
                             : "Seluruh catatan transaksi di perangkat ini akan dihapus.",
                         "Ya, Hapus Riwayat",
                         function () {
+                            var removedIds = [];
                             if (isBranchRole && authState.activeBranchId) {
                                 state.transactions = state.transactions.filter(function (t) {
-                                    return t && String(t.branchId || "") !== String(authState.activeBranchId);
+                                    var match = t && String(t.branchId || "") === String(authState.activeBranchId);
+                                    if (match && t.id) removedIds.push(String(t.id));
+                                    return !match;
                                 });
                             } else {
+                                state.transactions.forEach(function (t) {
+                                    if (t && t.id) removedIds.push(String(t.id));
+                                });
                                 state.transactions = [];
                             }
                             safeSet("qris_wp_trx", JSON.stringify(state.transactions));
+                            if (cloudState.db && cloudState.fns && removedIds.length > 0) {
+                                removedIds.forEach(function (idVal) {
+                                    cloudState.fns.deleteDoc(
+                                        cloudState.fns.doc(cloudState.db, "qris_warung_pintar_transactions", idVal)
+                                    ).catch(function () {});
+                                });
+                            }
                             state.trxPage = 1;
                             renderTransactions();
                             showToast("Riwayat transaksi telah dihapus.", "success");
@@ -4798,7 +5290,7 @@
                     }
                 });
 
-                // Halaman 5: Pengaturan & Unggah QRIS Custom
+                // Halaman 5: Pengaturan, Call Center Manual & Unggah QRIS Custom
                 document.getElementById("settingSpeechRate").addEventListener("input", function (ev) {
                     var r = parseFloat(ev.target.value) || 0.95;
                     document.getElementById("speechRateLabel").textContent = r.toFixed(2).replace(/\.00$/, "") + "x";
@@ -4850,7 +5342,48 @@
                     }
                 });
 
-                // Ekspor / Impor / Sinkronisasi JSON (Riwayat & Pengaturan)
+                document.getElementById("btnSaveCallCenter").addEventListener("click", function () {
+                    try {
+                        if (authState.sessionRole !== ROLE_MASTER) {
+                            showToast("Hanya Master Admin yang dapat mengubah kontak Call Center.", "error");
+                            return;
+                        }
+                        var ccName = document.getElementById("settingCcName").value.trim() || "Helpdesk Pusat Warung Pintar";
+                        var ccPhone = document.getElementById("settingCcPhone").value.trim();
+                        var ccHours = document.getElementById("settingCcHours").value.trim() || "Senin - Minggu, 08:00 - 21:00 WIB";
+                        var ccNotes = document.getElementById("settingCcNotes").value.trim();
+
+                        if (!ccPhone) {
+                            showToast("Masukkan nomor Telepon / WhatsApp Call Center terlebih dahulu.", "error");
+                            return;
+                        }
+
+                        state.callCenterName = ccName;
+                        state.callCenterPhone = ccPhone;
+                        state.callCenterHours = ccHours;
+                        state.callCenterNotes = ccNotes;
+
+                        persistAllState();
+                        syncUI();
+                        showToast("Nomor Call Center disimpan & langsung tayang di halaman Admin Cabang.", "success");
+                    } catch (err) {
+                        showToast("Gagal menyimpan kontak Call Center.", "error");
+                    }
+                });
+
+                function handleCopyCallCenterNumber() {
+                    var num = String(state.callCenterPhone || "").trim();
+                    if (!num) {
+                        showToast("Nomor Call Center belum tersedia.", "error");
+                        return;
+                    }
+                    copyToClipboardSafe(num, "Nomor Call Center " + num + " disalin.");
+                }
+
+                document.getElementById("btnCcBannerCopy").addEventListener("click", handleCopyCallCenterNumber);
+                document.getElementById("btnCcSettingCopy").addEventListener("click", handleCopyCallCenterNumber);
+
+                // Ekspor / Impor / Sinkronisasi JSON
                 document.getElementById("btnExportJson").addEventListener("click", exportDataAsJson);
                 document.getElementById("btnTrxExportJson").addEventListener("click", exportDataAsJson);
 
@@ -4871,11 +5404,251 @@
                 });
             }
 
-            // Handler error global agar aplikasi tetap aman dan responsif
-            window.onerror = function () {
-                showToast("Terjadi gangguan kecil dan sudah diamankan.", "error");
-                return true;
+            // Bridge Sinkronisasi Firebase Modular SDK v10.14.1
+            window.__qrisFirebaseBridge = {
+                attachClient: function (clientObj) {
+                    if (!clientObj || !clientObj.db || !clientObj.fns) return;
+                    cloudState.db = clientObj.db;
+                    cloudState.auth = clientObj.auth || null;
+                    cloudState.fns = clientObj.fns;
+                    setCloudSyncBadge("Menghubungkan Firebase", "connecting");
+                },
+                setStatus: function (label, mode) {
+                    setCloudSyncBadge(label, mode);
+                },
+                applyRemoteConfig: function (cfg) {
+                    if (!cfg || typeof cfg !== "object") return;
+                    cloudState.suppressRemoteEcho = true;
+                    try {
+                        if (cfg.warungName && authState.sessionRole !== ROLE_BRANCH && !authState.activeBranchId) {
+                            state.warungName = String(cfg.warungName);
+                            safeSet("qris_wp_warung", state.warungName);
+                        }
+                        if (cfg.ownerName && authState.sessionRole !== ROLE_BRANCH && !authState.activeBranchId) {
+                            state.ownerName = String(cfg.ownerName);
+                            safeSet("qris_wp_owner", state.ownerName);
+                        }
+                        if (cfg.nmid) {
+                            state.nmid = String(cfg.nmid);
+                            safeSet("qris_wp_nmid", state.nmid);
+                        }
+                        if (typeof cfg.callCenterName === "string") {
+                            state.callCenterName = cfg.callCenterName;
+                            safeSet("qris_wp_cc_name", state.callCenterName);
+                        }
+                        if (typeof cfg.callCenterPhone === "string") {
+                            state.callCenterPhone = cfg.callCenterPhone;
+                            safeSet("qris_wp_cc_phone", state.callCenterPhone);
+                        }
+                        if (typeof cfg.callCenterHours === "string") {
+                            state.callCenterHours = cfg.callCenterHours;
+                            safeSet("qris_wp_cc_hours", state.callCenterHours);
+                        }
+                        if (typeof cfg.callCenterNotes === "string") {
+                            state.callCenterNotes = cfg.callCenterNotes;
+                            safeSet("qris_wp_cc_notes", state.callCenterNotes);
+                        }
+                        if (cfg.masterPin) {
+                            var cleanPin = normalizePin(cfg.masterPin);
+                            if (cleanPin.length === 6) {
+                                state.masterPin = cleanPin;
+                                safeSet("master_admin_pin", cleanPin);
+                                safeSet("masterPin", cleanPin);
+                            }
+                        }
+                        if (typeof cfg.voiceEnabled === "boolean") {
+                            state.voiceEnabled = cfg.voiceEnabled;
+                            safeSet("qris_wp_voice", String(state.voiceEnabled));
+                        }
+                        var r = parseFloat(cfg.speechRate);
+                        if (Number.isFinite(r) && r >= 0.5 && r <= 2) {
+                            state.speechRate = r;
+                            safeSet("qris_wp_rate", String(state.speechRate));
+                        }
+                        if (cfg.speechFormat === "ringkas" || cfg.speechFormat === "lengkap") {
+                            state.speechFormat = cfg.speechFormat;
+                            safeSet("qris_wp_format", state.speechFormat);
+                        }
+                        syncUI();
+                        renderQrStandee();
+                    } finally {
+                        cloudState.suppressRemoteEcho = false;
+                    }
+                },
+                applyRemoteBranches: function (remoteList) {
+                    if (!Array.isArray(remoteList)) return;
+                    cloudState.suppressRemoteEcho = true;
+                    try {
+                        if (remoteList.length > 0) {
+                            authState.branches = remoteList.slice();
+                            safeSet("qris_wp_branches", JSON.stringify(authState.branches));
+                            if (authState.sessionRole === ROLE_BRANCH && authState.activeBranchId) {
+                                var activeBr = getActiveBranchRecord();
+                                if (activeBr) applyBranchContext(activeBr);
+                            }
+                        }
+                        syncUI();
+                        renderBranchesList();
+                        renderPinManagerList();
+                        renderTransactions();
+                    } finally {
+                        cloudState.suppressRemoteEcho = false;
+                    }
+                },
+                applyRemoteTransactions: function (remoteTrxList) {
+                    if (!Array.isArray(remoteTrxList)) return;
+                    cloudState.suppressRemoteEcho = true;
+                    try {
+                        if (remoteTrxList.length > 0) {
+                            var normalized = remoteTrxList.map(normalizeTransactionRecord);
+                            normalized.sort(function (a, b) {
+                                return String(b.id).localeCompare(String(a.id));
+                            });
+                            state.transactions = normalized;
+                            safeSet("qris_wp_trx", JSON.stringify(state.transactions));
+                        }
+                        renderTransactions();
+                    } finally {
+                        cloudState.suppressRemoteEcho = false;
+                    }
+                }
             };
+
+            // Pemuatan Dinamis Non-Blocking Firebase Modular SDK v10.14.1
+            async function initFirebaseDynamic() {
+                var bridge = window.__qrisFirebaseBridge;
+                try {
+                    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+                        if (bridge) bridge.setStatus("Mode Lokal (Offline)", "offline");
+                        return;
+                    }
+
+                    if (bridge) bridge.setStatus("Menghubungkan Firebase", "connecting");
+
+                    var firebaseConfig = {
+                        apiKey: "AIzaSyAaMNB3MJNN5psSkGtoQdHr9qepOYndoWo",
+                        authDomain: "kasir-9ebc1.firebaseapp.com",
+                        projectId: "kasir-9ebc1",
+                        storageBucket: "kasir-9ebc1.firebasestorage.app",
+                        messagingSenderId: "620036528415",
+                        appId: "1:620036528415:web:73d79bb1c793853c34b82a",
+                        measurementId: "G-DWF3RHJ4DD"
+                    };
+
+                    var modules = await Promise.all([
+                        import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
+                        import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"),
+                        import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js")
+                    ]);
+
+                    var appMod = modules[0];
+                    var authMod = modules[1];
+                    var fsMod = modules[2];
+
+                    var app = appMod.initializeApp(firebaseConfig);
+                    var auth = authMod.getAuth(app);
+                    var db = fsMod.getFirestore(app);
+                    var fns = {
+                        doc: fsMod.doc,
+                        setDoc: fsMod.setDoc,
+                        deleteDoc: fsMod.deleteDoc,
+                        collection: fsMod.collection,
+                        onSnapshot: fsMod.onSnapshot
+                    };
+
+                    if (bridge) bridge.attachClient({ app: app, auth: auth, db: db, fns: fns });
+
+                    var listenersStarted = false;
+                    function startRealtimeListeners() {
+                        if (listenersStarted) return;
+                        listenersStarted = true;
+                        try {
+                            if (bridge) bridge.setStatus("Terhubung Firebase", "connected");
+
+                            var configDocRef = fsMod.doc(db, "qris_warung_pintar", "merchant_config");
+                            fsMod.onSnapshot(
+                                configDocRef,
+                                function (snap) {
+                                    if (snap && snap.exists() && bridge) {
+                                        bridge.applyRemoteConfig(snap.data());
+                                    }
+                                },
+                                function () {
+                                    if (bridge) bridge.setStatus("Mode Lokal (Offline)", "offline");
+                                }
+                            );
+
+                            var branchesColRef = fsMod.collection(db, "qris_warung_pintar_branches");
+                            fsMod.onSnapshot(
+                                branchesColRef,
+                                function (querySnap) {
+                                    if (!querySnap || !bridge) return;
+                                    var list = [];
+                                    querySnap.forEach(function (d) {
+                                        var data = d.data() || {};
+                                        if (!data.id) data.id = d.id;
+                                        list.push(data);
+                                    });
+                                    bridge.applyRemoteBranches(list);
+                                },
+                                function () {}
+                            );
+
+                            var trxColRef = fsMod.collection(db, "qris_warung_pintar_transactions");
+                            fsMod.onSnapshot(
+                                trxColRef,
+                                function (querySnap) {
+                                    if (!querySnap || !bridge) return;
+                                    var trxList = [];
+                                    querySnap.forEach(function (d) {
+                                        var data = d.data() || {};
+                                        if (!data.id) data.id = d.id;
+                                        trxList.push(data);
+                                    });
+                                    bridge.applyRemoteTransactions(trxList);
+                                },
+                                function () {}
+                            );
+                        } catch (listenerErr) {
+                            if (bridge) bridge.setStatus("Mode Lokal (Offline)", "offline");
+                        }
+                    }
+
+                    authMod.onAuthStateChanged(auth, function (user) {
+                        if (user) startRealtimeListeners();
+                    });
+
+                    authMod.signInAnonymously(auth)
+                        .then(function () {
+                            startRealtimeListeners();
+                        })
+                        .catch(function () {
+                            if (bridge) bridge.setStatus("Mode Lokal (Offline)", "offline");
+                        });
+
+                    window.addEventListener("offline", function () {
+                        if (bridge) bridge.setStatus("Mode Lokal (Offline)", "offline");
+                    });
+
+                    window.addEventListener("online", function () {
+                        if (bridge) bridge.setStatus("Menghubungkan Firebase", "connecting");
+                        authMod.signInAnonymously(auth)
+                            .then(function () {
+                                startRealtimeListeners();
+                            })
+                            .catch(function () {
+                                if (bridge) bridge.setStatus("Mode Lokal (Offline)", "offline");
+                            });
+                    });
+                } catch (err) {
+                    if (bridge) bridge.setStatus("Mode Lokal (Offline)", "offline");
+                }
+            }
+
+            // Handler error global agar tidak pernah memunculkan exception tak tertangani
+            window.addEventListener("error", function () {
+                showToast("Terjadi gangguan kecil dan sudah diamankan.", "error");
+            });
 
             window.addEventListener("unhandledrejection", function (ev) {
                 if (ev && typeof ev.preventDefault === "function") {
@@ -4896,10 +5669,13 @@
                     renderTransactions();
                     renderBranchesList();
                     renderPinManagerList();
+                    setCloudSyncBadge("Sinkron Lokal", "local");
 
                     if (window.speechSynthesis && typeof window.speechSynthesis.getVoices === "function") {
                         window.speechSynthesis.getVoices();
                     }
+
+                    initFirebaseDynamic();
                 } catch (err) {
                     showToast("Aplikasi dimuat dalam mode pemulihan.", "error");
                 }
